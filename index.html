@@ -4,352 +4,320 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CricketStarsHD</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            background-color: #f4f4f4;
-            color: #333;
-            line-height: 1.6;
-        }
-
-        #app-container {
-            max-width: 900px;
-            margin: 20px auto;
-            background-color: #fff;
-            padding: 0;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            border-radius: 8px;
-            overflow: hidden; /* To contain header border-radius effect */
-        }
-
-        header {
-            background-color: #007bff; /* CricHeroes Blue */
-            color: white;
-            padding: 15px 20px;
-            text-align: center;
-            border-bottom: 4px solid #0056b3;
-        }
-
-        header h1 {
-            margin: 0;
-            font-size: 2em;
-        }
-
-        nav {
-            margin-top: 10px;
-        }
-
-        nav button {
-            background-color: #0056b3;
-            color: white;
+        /* Custom styles that Tailwind can't handle */
+        .video-item iframe {
+            width: 100%;
+            max-width: 560px;
+            height: 315px;
             border: none;
-            padding: 10px 15px;
-            margin: 0 5px;
-            cursor: pointer;
-            border-radius: 4px;
-            transition: background-color 0.3s ease;
         }
-
-        nav button:hover, nav button.active-nav {
-            background-color: #004085;
-        }
-
-        main#content-area {
-            padding: 20px;
-        }
-
-        section {
-            display: none; /* Hide all sections by default */
-            padding: 15px;
-            border: 1px solid #ddd;
-            margin-top: 10px;
-            border-radius: 5px;
-            background-color: #fff;
-        }
-
-        section.active {
-            display: block; /* Show active section */
-        }
-
-        h2, h3, h4, h5 {
-            color: #007bff;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-
-        input[type="text"],
-        input[type="number"],
-        input[type="url"],
-        select {
-            width: calc(100% - 22px); /* Adjust for padding and border */
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-
-        button {
-            background-color: #28a745; /* Green for actions */
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        button:hover {
-            background-color: #1e7e34;
-        }
-
-        #add-team-btn, #add-player-btn, #add-video-btn, #start-match-btn {
-            margin-left: 10px;
-        }
-
-        ul {
-            list-style-type: none;
-            padding: 0;
-        }
-
-        ul li {
-            background-color: #e9ecef;
-            padding: 10px;
-            margin-bottom: 5px;
-            border-radius: 3px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        ul li button.select-team-btn {
-            background-color: #17a2b8; /* Info blue */
-        }
-        ul li button.select-team-btn:hover {
-            background-color: #117a8b;
-        }
-
-
-        #scoreboard {
-            background-color: #f0f8ff;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 15px;
-            border: 1px solid #add8e6;
-        }
-
-        #scoreboard p {
-            margin: 5px 0;
-            font-size: 1.1em;
-        }
-
-        #scoreboard span {
-            font-weight: bold;
-        }
-
-        #scoring-buttons button {
-            margin: 5px;
-            padding: 8px 12px;
-            font-size: 0.9em;
-        }
-
+        
         .score-btn[data-runs], .score-btn[data-event="W"] {
             background-color: #007bff;
         }
         .score-btn[data-runs]:hover, .score-btn[data-event="W"]:hover {
             background-color: #0056b3;
         }
-
-        .score-btn[data-event="Wd"], .score-btn[data-event="Nb"], .score-btn[data-event="B"], .score-btn[data-event="LB"] {
-            background-color: #ffc107; /* Warning yellow for extras */
+        
+        .score-btn[data-event="Wd"], .score-btn[data-event="Nb"], 
+        .score-btn[data-event="B"], .score-btn[data-event="LB"] {
+            background-color: #ffc107;
             color: #333;
         }
-        .score-btn[data-event="Wd"]:hover, .score-btn[data-event="Nb"]:hover, .score-btn[data-event="B"]:hover, .score-btn[data-event="LB"]:hover {
+        .score-btn[data-event="Wd"]:hover, .score-btn[data-event="Nb"]:hover, 
+        .score-btn[data-event="B"]:hover, .score-btn[data-event="LB"]:hover {
             background-color: #e0a800;
         }
-
+        
         #undo-last-btn {
-            background-color: #dc3545; /* Red for undo/danger */
+            background-color: #dc3545;
         }
         #undo-last-btn:hover {
             background-color: #c82333;
         }
-
-
-        .video-item {
-            margin-bottom: 20px;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
+        
+        .active-nav {
+            background-color: #004085;
         }
-
-        .video-item h4 {
-            margin-top: 0;
+        
+        /* Animation for score updates */
+        @keyframes scoreUpdate {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
         }
-
-        .video-item iframe {
-            width: 100%;
-            max-width: 560px; /* Standard YouTube embed width */
-            height: 315px;    /* Standard YouTube embed height */
-            border: none;
-        }
-
-        footer {
-            text-align: center;
-            padding: 15px;
-            background-color: #343a40;
-            color: white;
-            margin-top: 20px;
-            font-size: 0.9em;
+        
+        .score-update {
+            animation: scoreUpdate 0.3s ease;
         }
     </style>
 </head>
-<body>
-    <div id="app-container">
-        <header>
-            <h1>CricketStarsHD</h1>
-            <nav>
-                <button data-section="dashboard">Dashboard</button>
-                <button data-section="teams">Teams</button>
-                <button data-section="new-match">New Match</button>
-                <button data-section="live-score">Live Scoring</button>
-                <button data-section="videos">Videos</button>
+<body class="bg-gray-100">
+    <div class="max-w-4xl mx-auto my-8 bg-white rounded-lg shadow-lg overflow-hidden">
+        <header class="bg-blue-600 text-white py-4 px-6 text-center border-b-4 border-blue-800">
+            <h1 class="text-3xl font-bold">CricketStarsHD</h1>
+            <p class="text-blue-100 mt-1">Your Ultimate Local Cricket Companion</p>
+            <nav class="mt-4 flex flex-wrap justify-center gap-2">
+                <button data-section="dashboard" class="bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-800 transition">Dashboard</button>
+                <button data-section="teams" class="bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-800 transition">Teams</button>
+                <button data-section="new-match" class="bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-800 transition">New Match</button>
+                <button data-section="live-score" class="bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-800 transition">Live Scoring</button>
+                <button data-section="videos" class="bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-800 transition">Videos</button>
+                <button data-section="export" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">Export</button>
             </nav>
         </header>
 
-        <main id="content-area">
+        <main class="p-6">
             <!-- Dashboard Section -->
             <section id="dashboard-section" class="active">
-                <h2>Dashboard</h2>
-                <p>Welcome to CricketStarsHD! Manage your local cricket matches and teams.</p>
-                <div class="quick-links">
-                    <button data-section="new-match">Start New Match</button>
-                    <button data-section="teams">Manage Teams</button>
+                <h2 class="text-2xl font-bold text-blue-600 mb-4">Dashboard</h2>
+                <div class="bg-blue-50 p-4 rounded-lg mb-6">
+                    <p class="text-blue-800">Welcome to CricketStarsHD! Manage your local cricket matches and teams.</p>
+                    <div class="flex gap-4 mt-4">
+                        <button data-section="new-match" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">Start New Match</button>
+                        <button data-section="teams" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">Manage Teams</button>
+                    </div>
                 </div>
-                <h3>Recent Activity (Mock)</h3>
-                <ul id="recent-activity-list">
-                    <li>Team Alpha vs Team Beta - Team Alpha won by 20 runs.</li>
-                    <li>New Player "John Doe" added to Team Alpha.</li>
+                <h3 class="text-xl font-semibold text-blue-600 mb-3">Recent Activity</h3>
+                <ul id="recent-activity-list" class="space-y-2">
+                    <li class="bg-gray-100 p-3 rounded">Team Alpha vs Team Beta - Team Alpha won by 20 runs.</li>
+                    <li class="bg-gray-100 p-3 rounded">New Player "John Doe" added to Team Alpha.</li>
                 </ul>
             </section>
 
             <!-- Teams Section -->
-            <section id="teams-section">
-                <h2>Manage Teams</h2>
-                <div class="form-group">
-                    <input type="text" id="team-name-input" placeholder="Enter Team Name">
-                    <button id="add-team-btn">Add Team</button>
+            <section id="teams-section" class="hidden">
+                <h2 class="text-2xl font-bold text-blue-600 mb-4">Manage Teams</h2>
+                <div class="flex gap-2 mb-6">
+                    <input type="text" id="team-name-input" placeholder="Enter Team Name" class="flex-1 px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <button id="add-team-btn" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">Add Team</button>
                 </div>
-                <h3>Your Teams:</h3>
-                <ul id="teams-list">
+                <h3 class="text-xl font-semibold text-blue-600 mb-3">Your Teams:</h3>
+                <ul id="teams-list" class="space-y-2 mb-6">
                     <!-- Teams will be listed here by JS -->
                 </ul>
-                <div id="team-details-view" style="display:none;">
-                    <h4 id="selected-team-name"></h4>
-                    <input type="text" id="player-name-input" placeholder="Player Name">
-                    <button id="add-player-btn">Add Player to Team</button>
-                    <h5>Players:</h5>
-                    <ul id="players-list"></ul>
+                <div id="team-details-view" class="hidden bg-gray-50 p-4 rounded-lg">
+                    <h4 id="selected-team-name" class="text-lg font-semibold text-blue-600 mb-3"></h4>
+                    <div class="flex gap-2 mb-4">
+                        <input type="text" id="player-name-input" placeholder="Player Name" class="flex-1 px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <button id="add-player-btn" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">Add Player</button>
+                    </div>
+                    <h5 class="font-semibold text-blue-600 mb-2">Players:</h5>
+                    <ul id="players-list" class="space-y-2">
+                        <!-- Players will be listed here -->
+                    </ul>
                 </div>
             </section>
 
             <!-- New Match Section -->
-            <section id="new-match-section">
-                <h2>Setup New Match</h2>
-                <div class="form-group">
-                    <label for="team1-select">Team 1:</label>
-                    <select id="team1-select">
-                        <!-- Options populated by JS -->
-                    </select>
+            <section id="new-match-section" class="hidden">
+                <h2 class="text-2xl font-bold text-blue-600 mb-4">Setup New Match</h2>
+                <div class="space-y-4 mb-6">
+                    <div>
+                        <label for="team1-select" class="block font-medium text-gray-700 mb-1">Team 1:</label>
+                        <select id="team1-select" class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <!-- Options populated by JS -->
+                        </select>
+                    </div>
+                    <div>
+                        <label for="team2-select" class="block font-medium text-gray-700 mb-1">Team 2:</label>
+                        <select id="team2-select" class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <!-- Options populated by JS -->
+                        </select>
+                    </div>
+                    <div>
+                        <label for="overs-input" class="block font-medium text-gray-700 mb-1">Overs:</label>
+                        <input type="number" id="overs-input" value="10" min="1" class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label for="match-location" class="block font-medium text-gray-700 mb-1">Location:</label>
+                        <input type="text" id="match-location" placeholder="Match location" class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label for="match-date" class="block font-medium text-gray-700 mb-1">Date:</label>
+                        <input type="date" id="match-date" class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="team2-select">Team 2:</label>
-                    <select id="team2-select">
-                        <!-- Options populated by JS -->
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="overs-input">Overs:</label>
-                    <input type="number" id="overs-input" value="10" min="1">
-                </div>
-                <button id="start-match-btn">Start Match & Go to Scoring</button>
+                <button id="start-match-btn" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition">Start Match & Go to Scoring</button>
             </section>
 
             <!-- Live Scoring Section -->
-            <section id="live-score-section">
-                <h2>Live Scoring</h2>
-                <div id="match-info-display">
-                    <p><strong>Team A</strong> vs <strong>Team B</strong> (Overs: <span id="total-overs-display">0</span>)</p>
+            <section id="live-score-section" class="hidden">
+                <h2 class="text-2xl font-bold text-blue-600 mb-4">Live Scoring</h2>
+                <div id="match-info-display" class="bg-blue-50 p-4 rounded-lg mb-6">
+                    <p><strong class="text-blue-700">Team A</strong> vs <strong class="text-blue-700">Team B</strong> (Overs: <span id="total-overs-display" class="font-bold">0</span>)</p>
+                    <p id="match-location-display" class="text-sm text-gray-600 mt-1"></p>
+                    <p id="match-date-display" class="text-sm text-gray-600"></p>
                 </div>
-                <div id="scoreboard">
-                    <h3 id="batting-team-name">Batting Team</h3>
-                    <p>Score: <span id="current-score">0</span>/<span id="current-wickets">0</span></p>
-                    <p>Overs: <span id="current-overs">0.0</span></p>
-                    <p>Batsman 1: <input type="text" id="batsman1-name" placeholder="Batsman 1"> (<span id="batsman1-score">0</span>)</p>
-                    <p>Batsman 2: <input type="text" id="batsman2-name" placeholder="Batsman 2"> (<span id="batsman2-score">0</span>)</p>
-                    <p>Bowler: <input type="text" id="current-bowler-name" placeholder="Bowler"> (<span id="bowler-figures">0/0</span>)</p>
+                <div id="scoreboard" class="bg-blue-50 p-4 rounded-lg mb-6">
+                    <h3 id="batting-team-name" class="text-xl font-semibold text-blue-700 mb-3">Batting Team</h3>
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <p class="text-gray-700">Score: <span id="current-score" class="font-bold text-blue-800">0</span>/<span id="current-wickets" class="font-bold text-blue-800">0</span></p>
+                            <p class="text-gray-700">Overs: <span id="current-overs" class="font-bold text-blue-800">0.0</span></p>
+                        </div>
+                        <div>
+                            <p class="text-gray-700">Run Rate: <span id="run-rate" class="font-bold text-blue-800">0.00</span></p>
+                            <p class="text-gray-700">Required RR: <span id="required-rr" class="font-bold text-blue-800">-</span></p>
+                        </div>
+                    </div>
+                    <div class="space-y-2 mb-4">
+                        <div class="flex items-center">
+                            <label class="w-24 text-gray-700">Batsman 1:</label>
+                            <input type="text" id="batsman1-name" placeholder="Batsman 1" class="flex-1 px-3 py-1 border rounded">
+                            <span class="ml-2 font-bold text-blue-800" id="batsman1-score">0</span>
+                        </div>
+                        <div class="flex items-center">
+                            <label class="w-24 text-gray-700">Batsman 2:</label>
+                            <input type="text" id="batsman2-name" placeholder="Batsman 2" class="flex-1 px-3 py-1 border rounded">
+                            <span class="ml-2 font-bold text-blue-800" id="batsman2-score">0</span>
+                        </div>
+                        <div class="flex items-center">
+                            <label class="w-24 text-gray-700">Bowler:</label>
+                            <input type="text" id="current-bowler-name" placeholder="Bowler" class="flex-1 px-3 py-1 border rounded">
+                            <span class="ml-2 font-bold text-blue-800" id="bowler-figures">0/0</span>
+                        </div>
+                    </div>
                 </div>
-                <div id="scoring-buttons">
-                    <h4>Score This Ball:</h4>
-                    <button class="score-btn" data-runs="0">0</button>
-                    <button class="score-btn" data-runs="1">1</button>
-                    <button class="score-btn" data-runs="2">2</button>
-                    <button class="score-btn" data-runs="3">3</button>
-                    <button class="score-btn" data-runs="4">4</button>
-                    <button class="score-btn" data-runs="6">6</button>
-                    <br>
-                    <button class="score-btn" data-event="Wd">Wide</button>
-                    <button class="score-btn" data-event="Nb">No Ball</button>
-                    <button class="score-btn" data-event="B">Bye</button>
-                    <button class="score-btn" data-event="LB">Leg Bye</button>
-                    <br>
-                    <button class="score-btn" data-event="W">Wicket</button>
-                    <button id="undo-last-btn">Undo Last</button>
+                
+                <div id="scoring-buttons" class="mb-6">
+                    <h4 class="text-lg font-semibold text-blue-600 mb-3">Score This Ball:</h4>
+                    <div class="flex flex-wrap gap-2 mb-3">
+                        <button class="score-btn px-4 py-2 rounded text-white" data-runs="0">0</button>
+                        <button class="score-btn px-4 py-2 rounded text-white" data-runs="1">1</button>
+                        <button class="score-btn px-4 py-2 rounded text-white" data-runs="2">2</button>
+                        <button class="score-btn px-4 py-2 rounded text-white" data-runs="3">3</button>
+                        <button class="score-btn px-4 py-2 rounded text-white" data-runs="4">4</button>
+                        <button class="score-btn px-4 py-2 rounded text-white" data-runs="6">6</button>
+                    </div>
+                    <div class="flex flex-wrap gap-2 mb-3">
+                        <button class="score-btn px-4 py-2 rounded" data-event="Wd">Wide</button>
+                        <button class="score-btn px-4 py-2 rounded" data-event="Nb">No Ball</button>
+                        <button class="score-btn px-4 py-2 rounded" data-event="B">Bye</button>
+                        <button class="score-btn px-4 py-2 rounded" data-event="LB">Leg Bye</button>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <button class="score-btn px-4 py-2 rounded text-white" data-event="W">Wicket</button>
+                        <button id="undo-last-btn" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition">Undo Last</button>
+                    </div>
                 </div>
-                <div id="end-inning-options" style="display: none;">
-                    <button id="end-inning-btn">End Innings</button>
+                
+                <div id="end-inning-options" class="hidden mb-6">
+                    <button id="end-inning-btn" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition">End Innings</button>
                 </div>
-                 <div id="match-summary" style="display: none;">
-                    <h4>Match Summary</h4>
-                    <p id="match-result"></p>
-                    <div id="final-scorecard"></div>
+                
+                <div id="match-summary" class="hidden bg-gray-50 p-4 rounded-lg">
+                    <h4 class="text-xl font-semibold text-blue-600 mb-3">Match Summary</h4>
+                    <p id="match-result" class="font-medium mb-4"></p>
+                    <div id="final-scorecard" class="space-y-3"></div>
+                    <div class="mt-6">
+                        <button id="generate-youtube-btn" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition mr-3">Generate YouTube Title/Desc</button>
+                        <button id="export-csv-btn" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">Export Match Data (CSV)</button>
+                    </div>
+                    <div id="youtube-content" class="mt-6 hidden">
+                        <h5 class="font-semibold text-blue-600 mb-2">YouTube Title:</h5>
+                        <div id="youtube-title" class="bg-white p-3 rounded border mb-4"></div>
+                        <h5 class="font-semibold text-blue-600 mb-2">YouTube Description:</h5>
+                        <div id="youtube-description" class="bg-white p-3 rounded border whitespace-pre-line"></div>
+                    </div>
                 </div>
             </section>
 
             <!-- Videos Section -->
-            <section id="videos-section">
-                <h2>Cricket Videos</h2>
-                <div class="form-group">
-                    <input type="text" id="video-title-input" placeholder="Video Title">
-                    <input type="url" id="video-url-input" placeholder="YouTube Video URL (e.g., https://www.youtube.com/watch?v=VIDEO_ID)">
-                    <button id="add-video-btn">Add Video</button>
+            <section id="videos-section" class="hidden">
+                <h2 class="text-2xl font-bold text-blue-600 mb-4">Cricket Videos</h2>
+                <div class="space-y-3 mb-6">
+                    <input type="text" id="video-title-input" placeholder="Video Title" class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <input type="url" id="video-url-input" placeholder="YouTube Video URL (e.g., https://www.youtube.com/watch?v=VIDEO_ID)" class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <button id="add-video-btn" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">Add Video</button>
                 </div>
-                <h3>Uploaded Videos:</h3>
-                <div id="videos-list">
+                <h3 class="text-xl font-semibold text-blue-600 mb-3">Uploaded Videos:</h3>
+                <div id="videos-list" class="space-y-6">
                     <!-- Videos will be embedded here -->
+                </div>
+            </section>
+
+            <!-- Export Section -->
+            <section id="export-section" class="hidden">
+                <h2 class="text-2xl font-bold text-blue-600 mb-4">Export Data</h2>
+                <div class="bg-blue-50 p-6 rounded-lg">
+                    <div class="mb-6">
+                        <h3 class="text-lg font-semibold text-blue-700 mb-3">Teams Data</h3>
+                        <button id="export-teams-csv" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition mr-3">Export Teams (CSV)</button>
+                        <button id="export-players-csv" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">Export Players (CSV)</button>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <h3 class="text-lg font-semibold text-blue-700 mb-3">Match Data</h3>
+                        <p class="text-gray-700 mb-3">Export complete match data including scorecards and player performances.</p>
+                        <button id="export-match-csv" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">Export Match Data (CSV)</button>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-lg font-semibold text-blue-700 mb-3">YouTube Content</h3>
+                        <p class="text-gray-700 mb-3">Generate YouTube-ready title and description for your match highlights.</p>
+                        <button id="generate-youtube-export" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition">Generate YouTube Content</button>
+                        <div id="youtube-export-content" class="mt-4 hidden">
+                            <div class="mb-4">
+                                <label class="block font-medium text-gray-700 mb-1">YouTube Title:</label>
+                                <div id="export-youtube-title" class="bg-white p-3 rounded border"></div>
+                            </div>
+                            <div>
+                                <label class="block font-medium text-gray-700 mb-1">YouTube Description:</label>
+                                <div id="export-youtube-description" class="bg-white p-3 rounded border whitespace-pre-line"></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </section>
         </main>
 
-        <footer>
-            <p>© 2023 CricketStarsHD - For Demonstration Purposes</p>
+        <footer class="bg-gray-800 text-white text-center py-4">
+            <p class="text-sm">© 2023 CricketStarsHD - Your Ultimate Local Cricket Companion</p>
         </footer>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const sections = document.querySelectorAll('main#content-area section');
+            // Navigation
+            const sections = document.querySelectorAll('main section');
             const navButtons = document.querySelectorAll('header nav button');
             const quickLinkButtons = document.querySelectorAll('.quick-links button');
+
+            function showSection(sectionId) {
+                sections.forEach(section => {
+                    section.classList.add('hidden');
+                    section.classList.remove('active');
+                    if (section.id === sectionId + '-section') {
+                        section.classList.remove('hidden');
+                        section.classList.add('active');
+                    }
+                });
+                
+                navButtons.forEach(btn => {
+                    btn.classList.remove('active-nav');
+                    if(btn.dataset.section === sectionId) {
+                        btn.classList.add('active-nav');
+                    }
+                });
+                
+                // Refresh dynamic content when switching sections
+                if (sectionId === 'teams') renderTeamsList();
+                if (sectionId === 'new-match') populateMatchSetupDropdowns();
+                if (sectionId === 'videos') renderVideosList();
+                if (sectionId === 'live-score' && appData.currentMatch) updateScoreboardDisplay();
+                if (sectionId === 'export') checkExportData();
+            }
+
+            navButtons.forEach(button => {
+                button.addEventListener('click', () => showSection(button.dataset.section));
+            });
+            
+            quickLinkButtons.forEach(button => {
+                button.addEventListener('click', () => showSection(button.dataset.section));
+            });
 
             // Team Management
             const teamNameInput = document.getElementById('team-name-input');
@@ -365,15 +333,21 @@
             const team1Select = document.getElementById('team1-select');
             const team2Select = document.getElementById('team2-select');
             const oversInput = document.getElementById('overs-input');
+            const matchLocationInput = document.getElementById('match-location');
+            const matchDateInput = document.getElementById('match-date');
             const startMatchBtn = document.getElementById('start-match-btn');
 
             // Live Scoring
             const matchInfoDisplay = document.getElementById('match-info-display');
+            const matchLocationDisplay = document.getElementById('match-location-display');
+            const matchDateDisplay = document.getElementById('match-date-display');
             const totalOversDisplay = document.getElementById('total-overs-display');
             const battingTeamNameH3 = document.getElementById('batting-team-name');
             const currentScoreSpan = document.getElementById('current-score');
             const currentWicketsSpan = document.getElementById('current-wickets');
             const currentOversSpan = document.getElementById('current-overs');
+            const runRateSpan = document.getElementById('run-rate');
+            const requiredRRSpan = document.getElementById('required-rr');
             const batsman1NameInput = document.getElementById('batsman1-name');
             const batsman1ScoreSpan = document.getElementById('batsman1-score');
             const batsman2NameInput = document.getElementById('batsman2-name');
@@ -387,13 +361,26 @@
             const matchSummaryDiv = document.getElementById('match-summary');
             const matchResultP = document.getElementById('match-result');
             const finalScorecardDiv = document.getElementById('final-scorecard');
-
+            const generateYoutubeBtn = document.getElementById('generate-youtube-btn');
+            const exportCsvBtn = document.getElementById('export-csv-btn');
+            const youtubeContentDiv = document.getElementById('youtube-content');
+            const youtubeTitleDiv = document.getElementById('youtube-title');
+            const youtubeDescriptionDiv = document.getElementById('youtube-description');
 
             // Videos
             const videoTitleInput = document.getElementById('video-title-input');
             const videoUrlInput = document.getElementById('video-url-input');
             const addVideoBtn = document.getElementById('add-video-btn');
             const videosListDiv = document.getElementById('videos-list');
+
+            // Export Section
+            const exportTeamsCsvBtn = document.getElementById('export-teams-csv');
+            const exportPlayersCsvBtn = document.getElementById('export-players-csv');
+            const exportMatchCsvBtn = document.getElementById('export-match-csv');
+            const generateYoutubeExportBtn = document.getElementById('generate-youtube-export');
+            const youtubeExportContentDiv = document.getElementById('youtube-export-content');
+            const exportYoutubeTitleDiv = document.getElementById('export-youtube-title');
+            const exportYoutubeDescriptionDiv = document.getElementById('export-youtube-description');
 
             // App Data (using localStorage for persistence)
             let appData = {
@@ -414,46 +401,23 @@
                 }
             }
 
-            // --- Navigation ---
-            function showSection(sectionId) {
-                sections.forEach(section => {
-                    section.classList.remove('active');
-                    if (section.id === sectionId + '-section') {
-                        section.classList.add('active');
-                    }
-                });
-                navButtons.forEach(btn => {
-                    btn.classList.remove('active-nav');
-                    if(btn.dataset.section === sectionId) {
-                        btn.classList.add('active-nav');
-                    }
-                });
-                // Refresh dynamic content when switching sections
-                if (sectionId === 'teams') renderTeamsList();
-                if (sectionId === 'new-match') populateMatchSetupDropdowns();
-                if (sectionId === 'videos') renderVideosList();
-                if (sectionId === 'live-score' && appData.currentMatch) updateScoreboardDisplay();
-
-            }
-
-            navButtons.forEach(button => {
-                button.addEventListener('click', () => showSection(button.dataset.section));
-            });
-            quickLinkButtons.forEach(button => {
-                button.addEventListener('click', () => showSection(button.dataset.section));
-            });
-
-
             // --- Team Management ---
             function renderTeamsList() {
                 teamsListUl.innerHTML = '';
                 appData.teams.forEach((team, index) => {
                     const li = document.createElement('li');
-                    li.textContent = team.name;
+                    li.className = 'bg-gray-100 p-3 rounded flex justify-between items-center';
+                    
+                    const teamNameSpan = document.createElement('span');
+                    teamNameSpan.textContent = team.name;
+                    teamNameSpan.className = 'font-medium';
+                    
                     const selectBtn = document.createElement('button');
                     selectBtn.textContent = 'Manage Players';
-                    selectBtn.classList.add('select-team-btn');
+                    selectBtn.className = 'bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700 transition';
                     selectBtn.onclick = () => selectTeamForPlayers(index);
+                    
+                    li.appendChild(teamNameSpan);
                     li.appendChild(selectBtn);
                     teamsListUl.appendChild(li);
                 });
@@ -464,7 +428,7 @@
                 appData.selectedTeamForPlayers = teamIndex;
                 const team = appData.teams[teamIndex];
                 selectedTeamNameH4.textContent = `Players for: ${team.name}`;
-                teamDetailsView.style.display = 'block';
+                teamDetailsView.classList.remove('hidden');
                 renderPlayersList(team.players);
             }
 
@@ -472,6 +436,7 @@
                 playersListUl.innerHTML = '';
                 players.forEach(player => {
                     const li = document.createElement('li');
+                    li.className = 'bg-gray-100 p-2 rounded flex justify-between items-center';
                     li.textContent = player.name;
                     playersListUl.appendChild(li);
                 });
@@ -480,7 +445,11 @@
             addTeamBtn.addEventListener('click', () => {
                 const teamName = teamNameInput.value.trim();
                 if (teamName) {
-                    appData.teams.push({ name: teamName, players: [] });
+                    appData.teams.push({ 
+                        name: teamName, 
+                        players: [],
+                        created: new Date().toISOString()
+                    });
                     teamNameInput.value = '';
                     renderTeamsList();
                     saveData();
@@ -492,7 +461,11 @@
             addPlayerBtn.addEventListener('click', () => {
                 const playerName = playerNameInput.value.trim();
                 if (playerName && appData.selectedTeamForPlayers !== null) {
-                    appData.teams[appData.selectedTeamForPlayers].players.push({ name: playerName, stats: {} }); // Basic stats object
+                    appData.teams[appData.selectedTeamForPlayers].players.push({ 
+                        name: playerName, 
+                        stats: {},
+                        added: new Date().toISOString()
+                    });
                     playerNameInput.value = '';
                     renderPlayersList(appData.teams[appData.selectedTeamForPlayers].players);
                     saveData();
@@ -522,6 +495,8 @@
                 const team1Index = team1Select.value;
                 const team2Index = team2Select.value;
                 const overs = parseInt(oversInput.value);
+                const location = matchLocationInput.value.trim();
+                const date = matchDateInput.value;
 
                 if (team1Index === "" || team2Index === "" || team1Index === team2Index) {
                     alert('Please select two different teams.');
@@ -533,65 +508,113 @@
                 }
 
                 appData.currentMatch = {
-                    team1: appData.teams[team1Index],
-                    team2: appData.teams[team2Index],
+                    team1: { ...appData.teams[team1Index], index: team1Index },
+                    team2: { ...appData.teams[team2Index], index: team2Index },
                     overs: overs,
+                    location: location,
+                    date: date,
                     innings: 1, // 1 or 2
                     currentInningsData: {
-                        battingTeam: appData.teams[team1Index].name, // Initially team1 bats
+                        battingTeam: appData.teams[team1Index].name,
                         bowlingTeam: appData.teams[team2Index].name,
                         score: 0,
                         wickets: 0,
                         ballsDeliveredThisOver: 0,
                         totalBallsDelivered: 0,
-                        batsmen: [{ name: "", score: 0, balls: 0 }, { name: "", score: 0, balls: 0 }], // Current batsmen
+                        batsmen: [{ name: "", score: 0, balls: 0 }, { name: "", score: 0, balls: 0 }],
                         bowler: { name: "", overs: 0, maidens: 0, runs: 0, wickets: 0 },
-                        scoreHistory: [], // To store each ball's data for undo
-                        fallOfWickets: []
+                        scoreHistory: [],
+                        fallOfWickets: [],
+                        extras: { wides: 0, noballs: 0, byes: 0, legbyes: 0 }
                     },
-                    innings1Score: null, // To store score of 1st innings
-                    matchOver: false
+                    innings1Score: null,
+                    innings1Wickets: null,
+                    innings1Overs: null,
+                    innings2Score: null,
+                    innings2Wickets: null,
+                    innings2Overs: null,
+                    matchOver: false,
+                    started: new Date().toISOString()
                 };
-                matchSummaryDiv.style.display = 'none';
+                
+                matchSummaryDiv.classList.add('hidden');
                 finalScorecardDiv.innerHTML = '';
-                endInningOptionsDiv.style.display = 'block'; // Show initially if scoring starts
+                endInningOptionsDiv.classList.remove('hidden');
                 updateScoreboardDisplay();
                 saveData();
                 showSection('live-score');
             });
 
-
             // --- Live Scoring ---
             function updateScoreboardDisplay() {
                 if (!appData.currentMatch || appData.currentMatch.matchOver) {
-                    matchInfoDisplay.innerHTML = "<p>No active match or match finished.</p>";
-                    if(document.getElementById('scoreboard')) document.getElementById('scoreboard').style.display = 'none';
-                    if(scoringButtonsContainer) scoringButtonsContainer.style.display = 'none';
-                    if(endInningOptionsDiv) endInningOptionsDiv.style.display = 'none';
+                    matchInfoDisplay.innerHTML = "<p class='text-gray-700'>No active match or match finished.</p>";
+                    document.getElementById('scoreboard').classList.add('hidden');
+                    scoringButtonsContainer.classList.add('hidden');
+                    endInningOptionsDiv.classList.add('hidden');
                     return;
                 }
-                if(document.getElementById('scoreboard')) document.getElementById('scoreboard').style.display = 'block';
-                if(scoringButtonsContainer) scoringButtonsContainer.style.display = 'block';
-
+                
+                document.getElementById('scoreboard').classList.remove('hidden');
+                scoringButtonsContainer.classList.remove('hidden');
 
                 const match = appData.currentMatch;
                 const innings = match.currentInningsData;
 
+                // Update match info
                 matchInfoDisplay.innerHTML = `
-                    <p><strong>${match.team1.name}</strong> vs <strong>${match.team2.name}</strong> 
-                    (Overs: <span id="total-overs-display">${match.overs}</span>)</p>
+                    <p><strong class="text-blue-700">${match.team1.name}</strong> vs <strong class="text-blue-700">${match.team2.name}</strong> 
+                    (Overs: <span id="total-overs-display" class="font-bold">${match.overs}</span>)</p>
                     ${match.innings === 2 && match.innings1Score !== null ? 
-                        `<p>Target: ${match.innings1Score + 1}</p>` : ''}
+                        `<p>Target: <span class="font-bold">${match.innings1Score + 1}</span></p>` : ''}
                 `;
+                
+                if (match.location) {
+                    matchLocationDisplay.textContent = `Location: ${match.location}`;
+                    matchLocationDisplay.classList.remove('hidden');
+                } else {
+                    matchLocationDisplay.classList.add('hidden');
+                }
+                
+                if (match.date) {
+                    const dateObj = new Date(match.date);
+                    matchDateDisplay.textContent = `Date: ${dateObj.toLocaleDateString()}`;
+                    matchDateDisplay.classList.remove('hidden');
+                } else {
+                    matchDateDisplay.classList.add('hidden');
+                }
 
+                // Update batting team and score
                 battingTeamNameH3.textContent = `Batting: ${innings.battingTeam}`;
                 currentScoreSpan.textContent = innings.score;
                 currentWicketsSpan.textContent = innings.wickets;
-                
+
+                // Calculate overs
                 const oversCompleted = Math.floor(innings.totalBallsDelivered / 6);
                 const ballsThisOver = innings.totalBallsDelivered % 6;
                 currentOversSpan.textContent = `${oversCompleted}.${ballsThisOver}`;
 
+                // Calculate run rate
+                const completedOversDecimal = oversCompleted + (ballsThisOver / 6);
+                const runRate = completedOversDecimal > 0 ? (innings.score / completedOversDecimal).toFixed(2) : 0;
+                runRateSpan.textContent = runRate;
+
+                // Calculate required run rate (for 2nd innings)
+                if (match.innings === 2 && match.innings1Score !== null) {
+                    const runsNeeded = (match.innings1Score + 1) - innings.score;
+                    const ballsRemaining = (match.overs * 6) - innings.totalBallsDelivered;
+                    
+                    if (ballsRemaining > 0 && runsNeeded > 0) {
+                        const requiredRR = (runsNeeded / (ballsRemaining / 6)).toFixed(2);
+                        requiredRRSpan.textContent = requiredRR;
+                    } else {
+                        requiredRRSpan.textContent = "-";
+                    }
+                } else {
+                    requiredRRSpan.textContent = "-";
+                }
+
+                // Update batsmen and bowler
                 batsman1NameInput.value = innings.batsmen[0].name || "";
                 batsman1ScoreSpan.textContent = innings.batsmen[0].score;
                 batsman2NameInput.value = innings.batsmen[1].name || "";
@@ -599,21 +622,43 @@
                 currentBowlerNameInput.value = innings.bowler.name || "";
                 bowlerFiguresSpan.textContent = `${innings.bowler.runs}/${innings.bowler.wickets}`;
 
-                // Show end innings button if conditions met or match just started
+                // Show end innings button if conditions met
                 const canEndInnings = innings.wickets >= 10 || 
-                                    (oversCompleted >= match.overs && innings.ballsDeliveredThisOver === 0) || // Over completed
-                                    (match.innings === 2 && innings.score > match.innings1Score) ||
-                                    (innings.totalBallsDelivered > 0); // At least one ball bowled
+                                     (oversCompleted >= match.overs && innings.ballsDeliveredThisOver === 0) ||
+                                     (match.innings === 2 && innings.score > match.innings1Score) ||
+                                     (innings.totalBallsDelivered > 0);
 
-                if (endInningOptionsDiv) {
-                     endInningOptionsDiv.style.display = canEndInnings && !match.matchOver ? 'block' : 'none';
-                }
+                endInningOptionsDiv.style.display = canEndInnings && !match.matchOver ? 'block' : 'none';
             }
-            
-            batsman1NameInput.addEventListener('change', (e) => { if(appData.currentMatch) appData.currentMatch.currentInningsData.batsmen[0].name = e.target.value; saveData(); });
-            batsman2NameInput.addEventListener('change', (e) => { if(appData.currentMatch) appData.currentMatch.currentInningsData.batsmen[1].name = e.target.value; saveData(); });
-            currentBowlerNameInput.addEventListener('change', (e) => { if(appData.currentMatch) appData.currentMatch.currentInningsData.bowler.name = e.target.value; saveData(); });
 
+            // Add animation to score updates
+            function animateScoreUpdate(element) {
+                element.classList.add('score-update');
+                setTimeout(() => {
+                    element.classList.remove('score-update');
+                }, 300);
+            }
+
+            batsman1NameInput.addEventListener('change', (e) => { 
+                if(appData.currentMatch) {
+                    appData.currentMatch.currentInningsData.batsmen[0].name = e.target.value; 
+                    saveData(); 
+                }
+            });
+            
+            batsman2NameInput.addEventListener('change', (e) => { 
+                if(appData.currentMatch) {
+                    appData.currentMatch.currentInningsData.batsmen[1].name = e.target.value; 
+                    saveData(); 
+                }
+            });
+            
+            currentBowlerNameInput.addEventListener('change', (e) => { 
+                if(appData.currentMatch) {
+                    appData.currentMatch.currentInningsData.bowler.name = e.target.value; 
+                    saveData(); 
+                }
+            });
 
             scoringButtonsContainer.addEventListener('click', (e) => {
                 if (!appData.currentMatch || appData.currentMatch.matchOver || !e.target.classList.contains('score-btn')) return;
@@ -627,37 +672,51 @@
                 let isLegalDelivery = true;
 
                 if (!isNaN(runs)) {
+                    // Normal runs scored
                     innings.score += runs;
-                    // For simplicity, assume batsman 1 is on strike. A real app needs strike rotation.
-                    innings.batsmen[0].score += runs; 
+                    innings.batsmen[0].score += runs;
                     innings.batsmen[0].balls++;
                     innings.bowler.runs += runs;
+                    
+                    // Animate score update
+                    animateScoreUpdate(currentScoreSpan);
+                    animateScoreUpdate(batsman1ScoreSpan);
                 } else if (event) {
                     switch (event) {
                         case 'Wd':
                             innings.score += 1;
                             innings.bowler.runs += 1;
+                            innings.extras.wides += 1;
                             isLegalDelivery = false;
+                            animateScoreUpdate(currentScoreSpan);
                             break;
                         case 'Nb':
-                            innings.score += 1; 
+                            innings.score += 1;
                             innings.bowler.runs += 1;
+                            innings.extras.noballs += 1;
                             isLegalDelivery = false;
-                            // For simplicity, a No Ball does not increment batsman's balls faced
+                            animateScoreUpdate(currentScoreSpan);
                             break;
                         case 'B':
+                            innings.score += 1;
+                            innings.extras.byes += 1;
+                            animateScoreUpdate(currentScoreSpan);
+                            break;
                         case 'LB':
-                            const extraRuns = 1; // Placeholder for how many byes/LBs
-                            innings.score += extraRuns;
-                            // Byes/LBs are not counted against bowler or batsman
+                            innings.score += 1;
+                            innings.extras.legbyes += 1;
+                            animateScoreUpdate(currentScoreSpan);
                             break;
                         case 'W':
                             innings.wickets += 1;
                             innings.bowler.wickets += 1;
-                            innings.fallOfWickets.push({score: innings.score, wickets: innings.wickets, over: `${Math.floor(innings.totalBallsDelivered / 6)}.${(innings.totalBallsDelivered % 6) + (isLegalDelivery ? 1:0)}`});
-                            if(innings.wickets >= 10) {
-                                // The handleInningsEnd check below will catch this
-                            }
+                            innings.fallOfWickets.push({
+                                score: innings.score, 
+                                wickets: innings.wickets, 
+                                over: `${Math.floor(innings.totalBallsDelivered / 6)}.${(innings.totalBallsDelivered % 6) + (isLegalDelivery ? 1:0)}`
+                            });
+                            animateScoreUpdate(currentWicketsSpan);
+                            animateScoreUpdate(bowlerFiguresSpan);
                             break;
                     }
                 }
@@ -667,28 +726,27 @@
                     innings.totalBallsDelivered++;
                     innings.bowler.overs = parseFloat((Math.floor(innings.totalBallsDelivered / 6) + (innings.totalBallsDelivered % 6) / 10).toFixed(1));
                 }
-                
+
                 innings.scoreHistory.push(prevState);
 
+                // Check if over is completed
                 if (isLegalDelivery && innings.ballsDeliveredThisOver >= 6) {
                     innings.ballsDeliveredThisOver = 0;
-                    // Simplified: does not automatically change bowler
                 }
 
                 // Check for innings end conditions
                 const oversCompletedThisInnings = Math.floor(innings.totalBallsDelivered / 6);
                 if (innings.wickets >= 10 || 
-                   (isLegalDelivery && oversCompletedThisInnings >= match.overs && innings.ballsDeliveredThisOver === 0) ) { // Overs completed exactly
+                    (isLegalDelivery && oversCompletedThisInnings >= match.overs && innings.ballsDeliveredThisOver === 0)) {
                     handleInningsEnd();
                 } else if (match.innings === 2 && innings.score > match.innings1Score) {
                     handleInningsEnd(); // Target achieved
                 }
 
-
                 updateScoreboardDisplay();
                 saveData();
             });
-            
+
             undoLastBtn.addEventListener('click', () => {
                 if (appData.currentMatch && appData.currentMatch.currentInningsData.scoreHistory.length > 0) {
                     appData.currentMatch.currentInningsData = appData.currentMatch.currentInningsData.scoreHistory.pop();
@@ -708,7 +766,12 @@
                 const inningsData = match.currentInningsData;
 
                 if (match.innings === 1) {
+                    // Store first innings data
                     match.innings1Score = inningsData.score;
+                    match.innings1Wickets = inningsData.wickets;
+                    match.innings1Overs = `${Math.floor(inningsData.totalBallsDelivered / 6)}.${inningsData.totalBallsDelivered % 6}`;
+                    
+                    // Switch to second innings
                     match.innings = 2;
                     match.currentInningsData = {
                         battingTeam: match.team2.name,
@@ -720,15 +783,24 @@
                         batsmen: [{ name: "", score: 0, balls: 0 }, { name: "", score: 0, balls: 0 }],
                         bowler: { name: "", overs: 0, maidens: 0, runs: 0, wickets: 0 },
                         scoreHistory: [],
-                        fallOfWickets: []
+                        fallOfWickets: [],
+                        extras: { wides: 0, noballs: 0, byes: 0, legbyes: 0 }
                     };
+                    
                     alert(`${inningsData.battingTeam} innings ended. Score: ${inningsData.score}/${inningsData.wickets}. Target for ${match.currentInningsData.battingTeam} is ${match.innings1Score + 1}.`);
-                } else { 
+                } else {
+                    // Match is over
+                    match.innings2Score = inningsData.score;
+                    match.innings2Wickets = inningsData.wickets;
+                    match.innings2Overs = `${Math.floor(inningsData.totalBallsDelivered / 6)}.${inningsData.totalBallsDelivered % 6}`;
                     match.matchOver = true;
-                    if (endInningOptionsDiv) endInningOptionsDiv.style.display = 'none';
-                    if (scoringButtonsContainer) scoringButtonsContainer.style.display = 'none';
+                    match.ended = new Date().toISOString();
+                    
+                    endInningOptionsDiv.classList.add('hidden');
+                    scoringButtonsContainer.classList.add('hidden');
                     determineWinner();
                 }
+                
                 updateScoreboardDisplay();
                 saveData();
             }
@@ -736,55 +808,142 @@
             function determineWinner() {
                 const match = appData.currentMatch;
                 let resultText = "Match Over. ";
-                // Score for team1 is either its first innings score (if it batted first)
-                // or its second innings score (if it batted second, which is not fully modelled here for game ending)
-                const team1FinalScore = match.team1.name === match.currentInningsData.battingTeam && match.innings === 1 ? match.currentInningsData.score : match.innings1Score;
-                // Score for team2 is its score if it's currently batting (2nd innings), or 0 if match ended after team1's 1st innings (not possible with current logic)
-                const team2FinalScore = match.team2.name === match.currentInningsData.battingTeam ? match.currentInningsData.score : (match.innings1Score !== null && match.team1.name === match.currentInningsData.bowlingTeam ? match.currentInningsData.score : 0);
+                
+                const team1FinalScore = match.team1.name === match.currentInningsData.battingTeam && match.innings === 1 ? 
+                    match.currentInningsData.score : match.innings1Score;
+                
+                const team2FinalScore = match.team2.name === match.currentInningsData.battingTeam ? 
+                    match.currentInningsData.score : (match.innings1Score !== null ? match.innings1Score : 0);
 
-
-                if (match.innings1Score === null) { // Only one innings played (e.g., team1 all out)
-                     resultText = `${match.team1.name} scored ${team1FinalScore}. Match incomplete for full result.`;
+                if (match.innings1Score === null) {
+                    resultText = `${match.team1.name} scored ${team1FinalScore}. Match incomplete for full result.`;
                 } else {
                     if (team2FinalScore > match.innings1Score) {
-                        resultText += `${match.team2.name} won by ${10 - match.currentInningsData.wickets} wickets.`;
+                        const wicketsLeft = 10 - match.currentInningsData.wickets;
+                        resultText += `${match.team2.name} won by ${wicketsLeft} wicket${wicketsLeft !== 1 ? 's' : ''}.`;
                     } else if (match.innings1Score > team2FinalScore) {
-                         resultText += `${match.team1.name} won by ${match.innings1Score - team2FinalScore} runs.`;
+                        const runsDiff = match.innings1Score - team2FinalScore;
+                        resultText += `${match.team1.name} won by ${runsDiff} run${runsDiff !== 1 ? 's' : ''}.`;
                     } else {
                         resultText += "Match Tied.";
                     }
                 }
 
                 matchResultP.textContent = resultText;
+                
+                // Create detailed scorecard
                 finalScorecardDiv.innerHTML = `
-                    <h4>${match.team1.name}: ${match.innings1Score !== null ? match.innings1Score : team1FinalScore}</h4>
-                    <h4>${match.team2.name}: ${team2FinalScore}</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-white p-4 rounded-lg shadow">
+                            <h5 class="font-semibold text-blue-600 mb-2">${match.team1.name}</h5>
+                            <p>${match.innings1Score}/${match.innings1Wickets} in ${match.innings1Overs} overs</p>
+                            ${match.innings === 2 ? `<p class="mt-2 font-medium">${match.team2.name} needed ${match.innings1Score + 1} to win</p>` : ''}
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow">
+                            <h5 class="font-semibold text-blue-600 mb-2">${match.team2.name}</h5>
+                            <p>${match.innings2Score}/${match.innings2Wickets} in ${match.innings2Overs} overs</p>
+                        </div>
+                    </div>
+                    <div class="mt-6 bg-white p-4 rounded-lg shadow">
+                        <h5 class="font-semibold text-blue-600 mb-2">Match Details</h5>
+                        <p>Location: ${match.location || 'Not specified'}</p>
+                        <p>Date: ${match.date ? new Date(match.date).toLocaleDateString() : 'Not specified'}</p>
+                        <p class="mt-2">Overs: ${match.overs}</p>
+                    </div>
                 `;
-                matchSummaryDiv.style.display = 'block';
+                
+                matchSummaryDiv.classList.remove('hidden');
                 saveData();
             }
 
+            // Generate YouTube content
+            generateYoutubeBtn.addEventListener('click', generateYouTubeContent);
+            generateYoutubeExportBtn.addEventListener('click', generateYouTubeContent);
+
+            function generateYouTubeContent() {
+                if (!appData.currentMatch || !appData.currentMatch.matchOver) {
+                    alert("Please complete a match first.");
+                    return;
+                }
+
+                const match = appData.currentMatch;
+                const team1 = match.team1.name;
+                const team2 = match.team2.name;
+                const team1Score = match.innings1Score;
+                const team2Score = match.innings2Score;
+                const location = match.location || "Local Ground";
+                const date = match.date ? new Date(match.date).toLocaleDateString() : "Recent Match";
+                
+                // Determine winner for title
+                let winner, result;
+                if (team2Score > team1Score) {
+                    winner = team2;
+                    const wicketsLeft = 10 - match.currentInningsData.wickets;
+                    result = `won by ${wicketsLeft} wicket${wicketsLeft !== 1 ? 's' : ''}`;
+                } else if (team1Score > team2Score) {
+                    winner = team1;
+                    const runsDiff = team1Score - team2Score;
+                    result = `won by ${runsDiff} run${runsDiff !== 1 ? 's' : ''}`;
+                } else {
+                    winner = "Both Teams";
+                    result = "Match Tied";
+                }
+
+                // Generate title
+                const youtubeTitle = `${team1} vs ${team2} - ${winner} ${result} | ${location} | ${date}`;
+                
+                // Generate description
+                let youtubeDescription = `🏏 ${team1} vs ${team2} Cricket Match Highlights 🏏\n\n`;
+                youtubeDescription += `📍 Location: ${location}\n`;
+                youtubeDescription += `📅 Date: ${date}\n`;
+                youtubeDescription += `⚖️ Overs: ${match.overs}\n\n`;
+                
+                youtubeDescription += `📊 Match Summary:\n`;
+                youtubeDescription += `${team1}: ${team1Score}/${match.innings1Wickets} in ${match.innings1Overs} overs\n`;
+                youtubeDescription += `${team2}: ${team2Score}/${match.innings2Wickets} in ${match.innings2Overs} overs\n\n`;
+                
+                youtubeDescription += `🏆 Result: ${winner} ${result}\n\n`;
+                
+                youtubeDescription += `🔔 Subscribe for more local cricket match highlights!\n`;
+                youtubeDescription += `👍 Like this video if you enjoyed it!\n`;
+                youtubeDescription += `💬 Comment below with your thoughts on the match!\n\n`;
+                
+                youtubeDescription += `#Cricket #LocalCricket #${team1.replace(/\s+/g, '')}vs${team2.replace(/\s+/g, '')} #CricketHighlights #${location.replace(/\s+/g, '')}Cricket`;
+
+                // Display in live scoring section
+                youtubeTitleDiv.textContent = youtubeTitle;
+                youtubeDescriptionDiv.textContent = youtubeDescription;
+                youtubeContentDiv.classList.remove('hidden');
+                
+                // Display in export section
+                exportYoutubeTitleDiv.textContent = youtubeTitle;
+                exportYoutubeDescriptionDiv.textContent = youtubeDescription;
+                youtubeExportContentDiv.classList.remove('hidden');
+            }
 
             // --- Videos Section ---
             function renderVideosList() {
                 videosListDiv.innerHTML = '';
                 appData.videos.forEach((video, index) => {
                     const videoId = getYouTubeID(video.url);
-                    if (!videoId) return; 
+                    if (!videoId) return;
 
                     const videoItem = document.createElement('div');
-                    videoItem.classList.add('video-item');
+                    videoItem.className = 'video-item bg-gray-100 p-4 rounded-lg';
                     videoItem.innerHTML = `
-                        <h4>${escapeHTML(video.title)}</h4>
-                        <iframe src="https://www.youtube.com/embed/${videoId}" 
-                                frameborder="0" 
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                                allowfullscreen>
-                        </iframe>
-                        <button class="remove-video-btn" data-index="${index}">Remove</button>
+                        <h4 class="text-lg font-semibold mb-2">${escapeHTML(video.title)}</h4>
+                        <div class="aspect-w-16 aspect-h-9 mb-3">
+                            <iframe src="https://www.youtube.com/embed/${videoId}" 
+                                    frameborder="0" 
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                    allowfullscreen>
+                            </iframe>
+                        </div>
+                        <button class="remove-video-btn bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700 transition" data-index="${index}">Remove Video</button>
                     `;
                     videosListDiv.appendChild(videoItem);
                 });
+                
                 document.querySelectorAll('.remove-video-btn').forEach(button => {
                     button.addEventListener('click', (e) => {
                         const videoIndex = parseInt(e.target.dataset.index);
@@ -807,12 +966,17 @@
                 return div.innerHTML;
             }
 
-
             addVideoBtn.addEventListener('click', () => {
                 const title = videoTitleInput.value.trim();
                 const url = videoUrlInput.value.trim();
-                if (title && url && getYouTubeID(url)) {
-                    appData.videos.push({ title, url });
+                const videoId = getYouTubeID(url);
+                
+                if (title && videoId) {
+                    appData.videos.push({ 
+                        title, 
+                        url,
+                        added: new Date().toISOString()
+                    });
                     videoTitleInput.value = '';
                     videoUrlInput.value = '';
                     renderVideosList();
@@ -822,10 +986,139 @@
                 }
             });
 
+            // --- Export Section ---
+            function checkExportData() {
+                // Enable/disable export buttons based on available data
+                exportTeamsCsvBtn.disabled = appData.teams.length === 0;
+                exportPlayersCsvBtn.disabled = appData.teams.length === 0 || 
+                    !appData.teams.some(team => team.players.length > 0);
+                exportMatchCsvBtn.disabled = !appData.currentMatch;
+                generateYoutubeExportBtn.disabled = !appData.currentMatch || !appData.currentMatch.matchOver;
+            }
+
+            // Export teams to CSV
+            exportTeamsCsvBtn.addEventListener('click', () => {
+                if (appData.teams.length === 0) {
+                    alert("No teams to export.");
+                    return;
+                }
+                
+                let csvContent = "data:text/csv;charset=utf-8,";
+                csvContent += "Team Name,Created Date,Player Count\n";
+                
+                appData.teams.forEach(team => {
+                    const row = [
+                        `"${team.name}"`,
+                        new Date(team.created).toLocaleDateString(),
+                        team.players.length
+                    ].join(",");
+                    csvContent += row + "\n";
+                });
+                
+                downloadCSV(csvContent, "CricketStarsHD_Teams.csv");
+            });
+
+            // Export players to CSV
+            exportPlayersCsvBtn.addEventListener('click', () => {
+                if (appData.teams.length === 0 || !appData.teams.some(team => team.players.length > 0)) {
+                    alert("No players to export.");
+                    return;
+                }
+                
+                let csvContent = "data:text/csv;charset=utf-8,";
+                csvContent += "Team Name,Player Name,Added Date\n";
+                
+                appData.teams.forEach(team => {
+                    team.players.forEach(player => {
+                        const row = [
+                            `"${team.name}"`,
+                            `"${player.name}"`,
+                            new Date(player.added).toLocaleDateString()
+                        ].join(",");
+                        csvContent += row + "\n";
+                    });
+                });
+                
+                downloadCSV(csvContent, "CricketStarsHD_Players.csv");
+            });
+
+            // Export match data to CSV
+            exportMatchCsvBtn.addEventListener('click', () => {
+                if (!appData.currentMatch) {
+                    alert("No match data to export.");
+                    return;
+                }
+                
+                const match = appData.currentMatch;
+                let csvContent = "data:text/csv;charset=utf-8,";
+                
+                // Match info
+                csvContent += "Match Info\n";
+                csvContent += `Team 1,${match.team1.name}\n`;
+                csvContent += `Team 2,${match.team2.name}\n`;
+                csvContent += `Overs,${match.overs}\n`;
+                csvContent += `Location,${match.location || ""}\n`;
+                csvContent += `Date,${match.date ? new Date(match.date).toLocaleDateString() : ""}\n`;
+                csvContent += `Started,${new Date(match.started).toLocaleString()}\n`;
+                csvContent += `Ended,${match.ended ? new Date(match.ended).toLocaleString() : "In Progress"}\n`;
+                csvContent += `Result,${match.matchOver ? matchResultP.textContent : "In Progress"}\n\n`;
+                
+                // First innings
+                if (match.innings1Score !== null) {
+                    csvContent += "First Innings\n";
+                    csvContent += `Batting Team,${match.team1.name}\n`;
+                    csvContent += `Score,${match.innings1Score}/${match.innings1Wickets}\n`;
+                    csvContent += `Overs,${match.innings1Overs}\n`;
+                    
+                    // Fall of wickets
+                    if (match.currentInningsData.fallOfWickets.length > 0) {
+                        csvContent += "\nFall of Wickets\n";
+                        match.currentInningsData.fallOfWickets.forEach(fow => {
+                            csvContent += `${fow.score}/${fow.wickets} (${fow.over}),`;
+                        });
+                        csvContent += "\n";
+                    }
+                }
+                
+                // Second innings
+                if (match.innings === 2) {
+                    csvContent += "\nSecond Innings\n";
+                    csvContent += `Batting Team,${match.team2.name}\n`;
+                    csvContent += `Score,${match.innings2Score || "In Progress"}/${match.innings2Wickets || "In Progress"}\n`;
+                    csvContent += `Overs,${match.innings2Overs || "In Progress"}\n`;
+                    
+                    // Fall of wickets
+                    if (match.currentInningsData.fallOfWickets.length > 0) {
+                        csvContent += "\nFall of Wickets\n";
+                        match.currentInningsData.fallOfWickets.forEach(fow => {
+                            csvContent += `${fow.score}/${fow.wickets} (${fow.over}),`;
+                        });
+                        csvContent += "\n";
+                    }
+                }
+                
+                downloadCSV(csvContent, `CricketStarsHD_Match_${match.team1.name}_vs_${match.team2.name}.csv`);
+            });
+
+            // Export match data from live scoring section
+            exportCsvBtn.addEventListener('click', () => {
+                exportMatchCsvBtn.click();
+            });
+
+            // Helper function to download CSV
+            function downloadCSV(csvContent, fileName) {
+                const encodedUri = encodeURI(csvContent);
+                const link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", fileName);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
 
             // --- Initial Load ---
             loadData();
-            showSection('dashboard'); 
+            showSection('dashboard');
         });
     </script>
 </body>
